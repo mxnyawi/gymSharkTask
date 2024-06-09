@@ -1,0 +1,21 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./my-shop
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+  backend:
+    image: gymsharktask:latest
+    volumes:
+    - ./config.env:/root/config.env
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+  db:
+    image: couchbase:community-7.2.0
+    ports:
+      - 8091-8094:8091-8094
+      - 11210:11210
