@@ -16,6 +16,8 @@ RUN npm install --only=production
 # Copy local code to the container image.
 COPY . ./
 
+COPY ./.env ./.env
+
 # Build the frontend application
 RUN npm run build
 

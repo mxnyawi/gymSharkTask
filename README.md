@@ -35,6 +35,13 @@ To set up your configuration:
         DOCUMENT_ID=12345
         USERNAME=admin
         PASSWORD=password
+        AUTH_TOKEN=your_auth_token
+    ```
+3. Create another file named `.env` in the `/my-shop` directory.
+4. Add the `REACT_APP_AUTH_TOKEN` environment variable in this file, in the format `REACT_APP_AUTH_TOKEN=value`. For example:
+
+    ```env
+        REACT_APP_AUTH_TOKEN=your_auth_token
     ```
 
 Replace the values with your actual configuration.
@@ -47,6 +54,8 @@ Here's a list of the environment variables used by the application:
 - `DOCUMENT_ID`: The ID of your order history in the database.
 - `USERNAME`: The username to use for database authentication.
 - `PASSWORD`: The password to use for database authentication.
+- `AUTH_TOKEN`: The authentication token for your application.
+- `REACT_APP_AUTH_TOKEN`: The authentication token for your React application. This should be the same as `AUTH_TOKEN`.
 
 Remember not to commit your `config.env` file to the Git repository. It's already listed in `.gitignore` to help prevent this.
 

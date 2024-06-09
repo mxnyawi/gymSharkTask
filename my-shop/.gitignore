@@ -25,3 +25,5 @@ yarn-error.log*
 # SSL cert files
 cert.pem
 key.pem
+
+.env

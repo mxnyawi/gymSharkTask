@@ -23,7 +23,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'valid-token'
+          'Authorization': process.env.REACT_APP_AUTH_TOKEN
         },
         body: JSON.stringify({
           username: username,
@@ -48,7 +48,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'valid-token'
+          'Authorization': process.env.REACT_APP_AUTH_TOKEN
         },
         body: JSON.stringify({
           orderAmount: Number(orderAmount),
@@ -71,7 +71,7 @@ function App() {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'valid-token'
+          'Authorization': process.env.REACT_APP_AUTH_TOKEN
         }
       });
 

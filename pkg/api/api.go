@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/mxnyawi/gymSharkTask/internal/db"
@@ -21,10 +22,12 @@ func StartServer(dbManager *db.DBManager) {
 // AuthMiddleware is a middleware function that checks for a valid authentication token
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Get authentication token from config
+		authToken := os.Getenv("AUTH_TOKEN")
+
 		// Check for a valid authentication token
-		// This is just a placeholder - you'll need to replace this with your actual authentication logic
 		token := r.Header.Get("Authorization")
-		if token != "valid-token" {
+		if token != authToken {
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
@@ -32,10 +35,4 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		// Call the next handler
 		next.ServeHTTP(w, r)
 	})
-}
-
-// ProtectedHandler is a handler that requires authentication
-func ProtectedHandler(w http.ResponseWriter, r *http.Request) {
-	// This handler will only be called if the request passed the AuthMiddleware
-	w.Write([]byte("Hello, authenticated user!"))
 }
