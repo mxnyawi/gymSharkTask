@@ -56,11 +56,11 @@ To start the application:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/username/repository.git
+    git clone https://github.com/mxnyawi/gymSharkTask.git
     ```
 2. Navigate to the project directory:
     ```bash
-    cd repository
+    cd gymSharkTask
     ```
 3. Use Docker Compose to build and run the application:
     ```bash
