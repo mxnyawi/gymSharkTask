@@ -8,6 +8,7 @@ import (
 	"github.com/couchbase/gocb/v2"
 )
 
+// CreateAdminUser creates an admin user
 func (db *DBManager) CreateAdminUser(username, password string) error {
 	userSettings := gocb.User{
 		Username: username,
@@ -25,6 +26,7 @@ func (db *DBManager) CreateAdminUser(username, password string) error {
 	return nil
 }
 
+// SetupDB sets up the database
 func (db *DBManager) SetupDB(bucketName, scopeName, collectionName, documentID string) error {
 	err := db.CreateBucket(bucketName)
 	if err != nil {
@@ -50,6 +52,7 @@ func (db *DBManager) SetupDB(bucketName, scopeName, collectionName, documentID s
 	return nil
 }
 
+// CreateBucket creates a bucket
 func (db *DBManager) CreateBucket(bucketName string) error {
 	createBucket := gocb.CreateBucketSettings{
 		BucketSettings: gocb.BucketSettings{
@@ -73,6 +76,7 @@ func (db *DBManager) CreateBucket(bucketName string) error {
 	}
 }
 
+// CreateScope creates a scope in a bucket
 func (db *DBManager) CreateScope(bucketName, scopeName string) error {
 	err := db.Cluster.Bucket(bucketName).Collections().CreateScope(scopeName, nil)
 	if err != nil {
@@ -84,6 +88,7 @@ func (db *DBManager) CreateScope(bucketName, scopeName string) error {
 	return nil
 }
 
+// CreateCollection creates a collection in a scope
 func (db *DBManager) CreateCollection(bucketName, scopeName, collectionName string) error {
 
 	collectionNameSettings := gocb.CollectionSpec{
@@ -101,6 +106,7 @@ func (db *DBManager) CreateCollection(bucketName, scopeName, collectionName stri
 	return nil
 }
 
+// WriteDocument writes a document to the database collection
 func (db *DBManager) WriteDocument(bucketName, scopeName, collectionName, documentID string, content interface{}) error {
 	collection := db.Cluster.Bucket(bucketName).Scope(scopeName).Collection(collectionName)
 
@@ -114,6 +120,7 @@ func (db *DBManager) WriteDocument(bucketName, scopeName, collectionName, docume
 	return nil
 }
 
+// UpdateDocument updates a document in the database collection with new content
 func (db *DBManager) UpdateDocument(bucketName, scopeName, collectionName, documentID string, content map[string]interface{}) error {
 	collection := db.Cluster.Bucket(bucketName).Scope(scopeName).Collection(collectionName)
 

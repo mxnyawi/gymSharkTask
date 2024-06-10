@@ -6,6 +6,7 @@ import (
 	"github.com/couchbase/gocb/v2"
 )
 
+// GetDocument gets the document from the database
 func (db *DBManager) GetDocument(bucketName, scopeName, collectionName, documentID string) (*DocumentHistory, error) {
 	collection := db.Cluster.Bucket(bucketName).Scope(scopeName).Collection(collectionName)
 
@@ -26,6 +27,7 @@ func (db *DBManager) GetDocument(bucketName, scopeName, collectionName, document
 	return &document, nil
 }
 
+// GetUser gets the user from the database
 func (db *DBManager) GetUser(bucketName, scopeName, collectionName, documentID string) (*User, error) {
 	collection := db.Cluster.Bucket(bucketName).Scope(scopeName).Collection(collectionName)
 

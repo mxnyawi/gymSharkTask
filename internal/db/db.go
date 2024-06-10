@@ -10,19 +10,23 @@ import (
 	"github.com/mxnyawi/gymSharkTask/internal/model"
 )
 
+// DBManager is a struct that contains the Couchbase cluster
 type DBManager struct {
 	Cluster *gocb.Cluster
 }
 
+// DocumentHistory is a struct that contains the history of documents
 type DocumentHistory struct {
 	History []Document `json:"history"`
 }
 
+// Document is a struct that contains the packages and order
 type Document struct {
 	Packages model.Packages `json:"packages"`
 	Order    model.Order    `json:"order"`
 }
 
+// User is a struct that contains the user credentials
 type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`

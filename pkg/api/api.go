@@ -8,6 +8,7 @@ import (
 	"github.com/mxnyawi/gymSharkTask/internal/db"
 )
 
+// StartServer starts the server
 func StartServer(dbManager *db.DBManager) {
 
 	r := mux.NewRouter()

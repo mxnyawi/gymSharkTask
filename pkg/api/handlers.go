@@ -11,20 +11,24 @@ import (
 	"github.com/mxnyawi/gymSharkTask/internal/model"
 )
 
+// OrderRequest is a struct that contains the order amount and package sizes
 type OrderRequest struct {
 	OrderAmount  int   `json:"orderAmount"`
 	PackageSizes []int `json:"packageSizes"`
 }
 
+// UserRequest is a struct that contains the user credentials
 type UserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
+// DocumentRequest is a struct that contains the document
 type DocumentRequest struct {
 	Document db.Document `json:"document"`
 }
 
+// DBSetup is a struct that contains the database setup
 type DBSetuo struct {
 	BucketName     string `json:"bucketName"`
 	ScopeName      string `json:"scopeName"`
@@ -34,6 +38,7 @@ type DBSetuo struct {
 
 var packages = &model.Packages{Sizes: []int{1, 5, 10}} // Default package sizes
 
+// RegisterHandler registers a new user
 func RegisterHandler(w http.ResponseWriter, r *http.Request, dbManager *db.DBManager) {
 	var user UserRequest
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -66,6 +71,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request, dbManager *db.DBMan
 	w.WriteHeader(http.StatusCreated)
 }
 
+// LoginHandler logs in a user and checks the password
 func LoginHandler(w http.ResponseWriter, r *http.Request, dbManager *db.DBManager) {
 	var user UserRequest
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -103,6 +109,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, dbManager *db.DBManage
 	w.WriteHeader(http.StatusOK)
 }
 
+// PostOrderHandler creates a new order and finds the packages for it
 func PostOrderHandler(w http.ResponseWriter, r *http.Request, dbManager *db.DBManager) {
 	var req OrderRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -147,6 +154,7 @@ func PostOrderHandler(w http.ResponseWriter, r *http.Request, dbManager *db.DBMa
 	json.NewEncoder(w).Encode(order)
 }
 
+// CreateAdminUserHandler creates an admin user in the database
 func CreateAdminUserHandler(w http.ResponseWriter, r *http.Request, dbManager *db.DBManager) {
 	var req UserRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -164,6 +172,7 @@ func CreateAdminUserHandler(w http.ResponseWriter, r *http.Request, dbManager *d
 	w.WriteHeader(http.StatusCreated)
 }
 
+// SetDocumentHandler sets a document in the database
 func SetDocumentHandler(w http.ResponseWriter, r *http.Request, dbManager *db.DBManager) {
 	var req DocumentRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
