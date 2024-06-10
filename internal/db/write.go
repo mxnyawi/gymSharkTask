@@ -43,6 +43,12 @@ func (db *DBManager) SetupDB(bucketName, scopeName, collectionName, documentID s
 		return err
 	}
 
+	_, err = db.GetDocument(bucketName, scopeName, collectionName, documentID)
+	if err == nil {
+		log.Println("Document already exists")
+		return nil
+	}
+
 	err = db.WriteDocument(bucketName, scopeName, collectionName, documentID, DocumentHistory{History: []Document{}})
 	if err != nil {
 		log.Printf("Failed to write order document: %v", err)
@@ -79,13 +85,17 @@ func (db *DBManager) CreateBucket(bucketName string) error {
 // CreateScope creates a scope in a bucket
 func (db *DBManager) CreateScope(bucketName, scopeName string) error {
 	err := db.Cluster.Bucket(bucketName).Collections().CreateScope(scopeName, nil)
-	if err != nil {
+	switch {
+	case err == nil:
+		log.Println("Scope created successfully")
+		return nil
+	case strings.Contains(err.Error(), "already exists"):
+		log.Println("Scope already exists")
+		return nil
+	default:
 		log.Printf("Failed to create scope: %v", err)
 		return err
 	}
-
-	log.Println("Scope created successfully")
-	return nil
 }
 
 // CreateCollection creates a collection in a scope
@@ -97,13 +107,17 @@ func (db *DBManager) CreateCollection(bucketName, scopeName, collectionName stri
 	}
 
 	err := db.Cluster.Bucket(bucketName).Collections().CreateCollection(collectionNameSettings, nil)
-	if err != nil {
+	switch {
+	case err == nil:
+		log.Println("Collection created successfully")
+		return nil
+	case strings.Contains(err.Error(), "already exists"):
+		log.Println("Collection already exists")
+		return nil
+	default:
 		log.Printf("Failed to create collection: %v", err)
 		return err
 	}
-
-	log.Println("Collection created successfully")
-	return nil
 }
 
 // WriteDocument writes a document to the database collection
