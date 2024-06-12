@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/couchbase/gocb/v2"
@@ -13,14 +14,12 @@ func (db *DBManager) GetDocument(bucketName, scopeName, collectionName, document
 	var document DocumentHistory
 	docOut, err := collection.Get(documentID, &gocb.GetOptions{})
 	if err != nil {
-		log.Printf("Failed to get document: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("failed to get document: %w", err)
 	}
 
 	err = docOut.Content(&document)
 	if err != nil {
-		log.Printf("Failed to get document content: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("failed to get document content: %w", err)
 	}
 
 	log.Println("Document retrieved successfully")
@@ -34,14 +33,12 @@ func (db *DBManager) GetUser(bucketName, scopeName, collectionName, documentID s
 	var document User
 	docOut, err := collection.Get(documentID, &gocb.GetOptions{})
 	if err != nil {
-		log.Printf("Failed to get user: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("failed to get user: %w", err)
 	}
 
 	err = docOut.Content(&document)
 	if err != nil {
-		log.Printf("Failed to get user content: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("failed to get user content: %w", err)
 	}
 
 	log.Println("User retrieved successfully")

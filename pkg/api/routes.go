@@ -8,7 +8,7 @@ import (
 	"github.com/rs/cors"
 )
 
-func Routes(dbManager *db.DBManager) {
+func Routes(dbManager db.DBManagerInterface) {
 	r := mux.NewRouter()
 
 	// Middleware to authenticate users
@@ -40,10 +40,6 @@ func Routes(dbManager *db.DBManager) {
 	r.HandleFunc("/getDocument", func(w http.ResponseWriter, r *http.Request) {
 		GetDocumentHandler(w, r, dbManager)
 	}).Methods("GET")
-
-	r.HandleFunc("/updateDocument", func(w http.ResponseWriter, r *http.Request) {
-		UpdateDocumentHandler(w, r, dbManager)
-	}).Methods("PUT")
 
 	// Configure CORS
 	c := cors.New(cors.Options{

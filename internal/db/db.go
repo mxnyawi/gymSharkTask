@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -9,6 +10,18 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/mxnyawi/gymSharkTask/internal/model"
 )
+
+type DBManagerInterface interface {
+	GetDocument(bucketName, scopeName, collectionName, documentID string) (*DocumentHistory, error)
+	GetUser(bucketName, scopeName, collectionName, documentID string) (*User, error)
+	WriteDocument(bucket, scope, collection, id string, data interface{}) error
+	GetDBCreds() (string, string, string, string, error)
+	CreateAdminUser(username, password string) error
+	CreateBucket(bucketName string) error
+	CreateScope(bucketName, scopeName string) error
+	CreateCollection(bucketName, scopeName, collectionName string) error
+	GetClusterCredentials() (string, string, error)
+}
 
 // DBManager is a struct that contains the Couchbase cluster
 type DBManager struct {
@@ -36,7 +49,7 @@ type User struct {
 func NewDBManager() (*DBManager, error) {
 	cluster, err := ConnectToCluster()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to connect to cluster: %w", err)
 	}
 
 	return &DBManager{Cluster: cluster}, nil
@@ -46,8 +59,7 @@ func NewDBManager() (*DBManager, error) {
 func (db *DBManager) GetDBCreds() (string, string, string, string, error) {
 	err := godotenv.Load("config.env")
 	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-		return "", "", "", "", err
+		return "", "", "", "", fmt.Errorf("failed to load .env file: %w", err)
 	}
 
 	bucketName := os.Getenv("BUCKET_NAME")
@@ -62,8 +74,7 @@ func (db *DBManager) GetDBCreds() (string, string, string, string, error) {
 func GetDBAminCreds() (string, string, error) {
 	err := godotenv.Load("config.env")
 	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-		return "", "", err
+		return "", "", fmt.Errorf("failed to load .env file: %w", err)
 	}
 
 	// Get the admin credentials
@@ -77,8 +88,7 @@ func GetDBAminCreds() (string, string, error) {
 func (db *DBManager) GetClusterCredentials() (string, string, error) {
 	err := godotenv.Load("config.env")
 	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-		return "", "", err
+		return "", "", fmt.Errorf("failed to load .env file: %w", err)
 	}
 
 	clusterUsername := os.Getenv("USERNAME")
@@ -91,8 +101,7 @@ func (db *DBManager) GetClusterCredentials() (string, string, error) {
 func ConnectToCluster() (*gocb.Cluster, error) {
 	adminUsername, adminPassword, err := GetDBAminCreds()
 	if err != nil {
-		log.Fatalf("Failed to get admin credentials: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("failed to get admin credentials: %w", err)
 	}
 
 	cluster, err := gocb.Connect("couchbase://db", gocb.ClusterOptions{
@@ -100,8 +109,7 @@ func ConnectToCluster() (*gocb.Cluster, error) {
 		Password: adminPassword,
 	})
 	if err != nil {
-		log.Printf("Failed to connect to database: %v", err)
-		return nil, err
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
 	return cluster, nil
@@ -111,7 +119,7 @@ func ConnectToCluster() (*gocb.Cluster, error) {
 func InitDB() (*DBManager, error) {
 	db, err := NewDBManager()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create new DBManager: %w", err)
 	}
 
 	log.Println("Connected to Couchbase successfully")
@@ -127,28 +135,24 @@ func InitDB() (*DBManager, error) {
 func SetupBucket(dbManager *DBManager) error {
 	bucketName, scopeName, collectionName, documentID, err := dbManager.GetDBCreds()
 	if err != nil {
-		log.Fatalf("Could not get database credentials: %v", err)
-		return err
+		return fmt.Errorf("failed to get database credentials: %w", err)
 	}
 
 	err = dbManager.SetupDB(bucketName, scopeName, collectionName, documentID)
 	if err != nil {
-		log.Fatalf("Failed to setup database: %v", err)
-		return err
+		return fmt.Errorf("failed to setup database: %w", err)
 	}
 
 	log.Println("Bucket setup successfully")
 
 	user, pass, err := dbManager.GetClusterCredentials()
 	if err != nil {
-		log.Fatalf("Could not get cluster credentials: %v", err)
-		return err
+		return fmt.Errorf("failed to get cluster credentials: %w", err)
 	}
 
 	hash, err := argon2id.CreateHash(pass, argon2id.DefaultParams)
 	if err != nil {
-		log.Fatalf("Could not hash password: %v", err)
-		return err
+		return fmt.Errorf("failed to hash password: %w", err)
 	}
 
 	pass = hash
@@ -156,8 +160,7 @@ func SetupBucket(dbManager *DBManager) error {
 	// Create a new user with full access to the bucket
 	err = dbManager.WriteDocument(bucketName, scopeName, collectionName, user, User{Username: user, Password: pass})
 	if err != nil {
-		log.Fatalf("Failed to write user document: %v", err)
-		return err
+		return fmt.Errorf("failed to write user document: %w", err)
 	}
 
 	log.Println("User document written successfully")

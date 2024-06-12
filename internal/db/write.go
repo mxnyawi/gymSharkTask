@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -18,8 +19,7 @@ func (db *DBManager) CreateAdminUser(username, password string) error {
 
 	err := db.Cluster.Users().UpsertUser(userSettings, nil)
 	if err != nil {
-		log.Printf("Failed to create admin user: %v", err)
-		return err
+		return fmt.Errorf("failed to create admin user: %w", err)
 	}
 
 	log.Println("Admin user created successfully")
@@ -30,17 +30,17 @@ func (db *DBManager) CreateAdminUser(username, password string) error {
 func (db *DBManager) SetupDB(bucketName, scopeName, collectionName, documentID string) error {
 	err := db.CreateBucket(bucketName)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create bucket: %w", err)
 	}
 
 	err = db.CreateScope(bucketName, scopeName)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create scope: %w", err)
 	}
 
 	err = db.CreateCollection(bucketName, scopeName, collectionName)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create collection: %w", err)
 	}
 
 	_, err = db.GetDocument(bucketName, scopeName, collectionName, documentID)
@@ -51,8 +51,7 @@ func (db *DBManager) SetupDB(bucketName, scopeName, collectionName, documentID s
 
 	err = db.WriteDocument(bucketName, scopeName, collectionName, documentID, DocumentHistory{History: []Document{}})
 	if err != nil {
-		log.Printf("Failed to write order document: %v", err)
-		return err
+		return fmt.Errorf("failed to write document: %w", err)
 	}
 
 	return nil
@@ -77,8 +76,7 @@ func (db *DBManager) CreateBucket(bucketName string) error {
 		log.Println("Bucket already exists")
 		return nil
 	default:
-		log.Printf("Failed to create bucket: %v", err)
-		return err
+		return fmt.Errorf("failed to create bucket: %w", err)
 	}
 }
 
@@ -93,8 +91,7 @@ func (db *DBManager) CreateScope(bucketName, scopeName string) error {
 		log.Println("Scope already exists")
 		return nil
 	default:
-		log.Printf("Failed to create scope: %v", err)
-		return err
+		return fmt.Errorf("failed to create scope: %w", err)
 	}
 }
 
@@ -115,8 +112,7 @@ func (db *DBManager) CreateCollection(bucketName, scopeName, collectionName stri
 		log.Println("Collection already exists")
 		return nil
 	default:
-		log.Printf("Failed to create collection: %v", err)
-		return err
+		return fmt.Errorf("failed to create collection: %w", err)
 	}
 }
 
@@ -126,29 +122,9 @@ func (db *DBManager) WriteDocument(bucketName, scopeName, collectionName, docume
 
 	_, err := collection.Upsert(documentID, content, &gocb.UpsertOptions{Timeout: 10 * time.Second})
 	if err != nil {
-		log.Printf("Failed to write document: %v", err)
-		return err
+		return fmt.Errorf("failed to write document: %w", err)
 	}
 
 	log.Println("Document written successfully")
-	return nil
-}
-
-// UpdateDocument updates a document in the database collection with new content
-func (db *DBManager) UpdateDocument(bucketName, scopeName, collectionName, documentID string, content map[string]interface{}) error {
-	collection := db.Cluster.Bucket(bucketName).Scope(scopeName).Collection(collectionName)
-
-	mops := make([]gocb.MutateInSpec, 0, len(content))
-	for k, v := range content {
-		mops = append(mops, gocb.UpsertSpec(k, v, &gocb.UpsertSpecOptions{}))
-	}
-
-	_, err := collection.MutateIn(documentID, mops, &gocb.MutateInOptions{Timeout: 10 * time.Second})
-	if err != nil {
-		log.Printf("Failed to update document: %v", err)
-		return err
-	}
-
-	log.Println("Document updated successfully")
 	return nil
 }

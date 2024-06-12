@@ -1,6 +1,7 @@
 package api
 
 import (
+	"log"
 	"net/http"
 	"os"
 
@@ -9,7 +10,7 @@ import (
 )
 
 // StartServer starts the server
-func StartServer(dbManager *db.DBManager) {
+func StartServer(dbManager db.DBManagerInterface) {
 
 	r := mux.NewRouter()
 
@@ -29,6 +30,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		// Check for a valid authentication token
 		token := r.Header.Get("Authorization")
 		if token != authToken {
+			log.Println("Invalid token")
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
