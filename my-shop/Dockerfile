@@ -23,4 +23,4 @@ RUN npm run build
 
 # Serve the app on port 8080
 EXPOSE 3000
-CMD [ "npm", "start", "start:https" ]
+CMD [ "npm", "start"]
