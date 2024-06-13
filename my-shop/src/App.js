@@ -19,7 +19,7 @@ function App() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://localhost:8080/loginUser', {
+      const response = await fetch('http://'+process.env.REACT_APP_IP+':8080/loginUser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ function App() {
 
   const sendPostRequest = async () => {
     try {
-      const response = await fetch('http://localhost:8080/order', {
+      const response = await fetch('http://'+process.env.REACT_APP_IP+':8080/order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ function App() {
         setResponseMessage('POST request was successful but no content returned');
       }
 
-      const historyResponse = await fetch('http://localhost:8080/getDocument', {
+      const historyResponse = await fetch('http://'+process.env.REACT_APP_IP+':8080/getDocument', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

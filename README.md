@@ -36,12 +36,14 @@ To set up your configuration:
         USERNAME=admin
         PASSWORD=password
         AUTH_TOKEN=your_auth_token
+        MY_IP=YOUR_IP or localhost
     ```
 3. Create another file named `.env` in the `/my-shop` directory.
 4. Add the `REACT_APP_AUTH_TOKEN` environment variable in this file, in the format `REACT_APP_AUTH_TOKEN=value`. For example:
 
     ```env
         REACT_APP_AUTH_TOKEN=your_auth_token
+        REACT_APP_IP=YOUR_IP or localhost
     ```
 
 Replace the values with your actual configuration.

@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 	"github.com/mxnyawi/gymSharkTask/internal/db"
@@ -41,9 +42,11 @@ func Routes(dbManager db.DBManagerInterface) {
 		GetDocumentHandler(w, r, dbManager)
 	}).Methods("GET")
 
+	authToken := os.Getenv("MY_IP")
+
 	// Configure CORS
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"http://" + authToken + ":3000"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
 		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowCredentials: true,
